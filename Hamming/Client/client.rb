@@ -30,12 +30,12 @@ def get_positions(pos, length)
 
 end
 
-def is_even(bit_string, where)
+def mod(bit_string, where)
 	count = 0
 
 	where.each { |x| count += bit_string[x - 1].to_i }
 	
-	return count % 2 == 0
+	return count % 2
 
 end
 
@@ -44,19 +44,20 @@ puts "Please the byte of data you want to encode (7 bits)"
 to_encode = gets.chomp
 
 while to_encode.length != 7
-puts "Incorrect byte of data length"
-to_encode = gets.chomp
+	puts "Incorrect byte of data length"
+	to_encode = gets.chomp
 end
 
-parity_bits = get_parity_bits(to_encode.length)
+parity_bits = get_parity_bits(bits_length)
 
 parity_bits.each { |x|
 	to_encode.insert(x - 1, '_')
 }
 
 parity_bits.each { |x|
-	even = is_even(to_encode, get_positions(x, to_encode.length).drop(1))
-	to_encode[x - 1] = even ? "0" : "1"
+	positions = get_positions(x, bits_length)
+	puts positions
+	to_encode[x - 1] = String(mod(to_encode, positions))
 }
 
 puts "Encodierter Hamming-Code: " << to_encode
