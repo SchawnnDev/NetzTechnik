@@ -47,10 +47,21 @@ puts "Incorrect byte of data length"
 to_encode = gets.chomp
 end
 
-get_parity_bits(to_encode.length).each { |x|
-	even = is_even(to_encode, get_positions(x, to_encode.length))
-	puts "x " << String(x) << " is " << (even ? "true" : "false")
-	to_encode.insert(x - 1, even ? "0" : "1")
+parity_bits = get_parity_bits(to_encode.length)
+
+parity_bits.each { |x|
+	to_encode.insert(x - 1, '_')
 }
+
+puts to_encode
+
+parity_bits.each { |x|
+	even = is_even(to_encode, get_positions(x, to_encode.length).drop(1))
+	puts "x " << String(x) << " is " << (even ? "true" : "false")
+	to_encode[x - 1] = even ? "0" : "1"
+}
+
+
+
 
 puts "Encodierter Hamming-Code: " << to_encode
