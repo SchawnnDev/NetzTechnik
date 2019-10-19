@@ -39,25 +39,20 @@ def mod(bit_string, where)
 
 end
 
-bits_length = 8
-puts "Please the byte of data you want to encode (7 bits)"
-to_encode = gets.chomp
+input_length = 7
+output_length = 11
+puts "Please the byte of data you want to encode (#{input_length} bits)"
+to_encode = "1000001"#gets.chomp
 
-while to_encode.length != 7
+while to_encode.length != input_length
 	puts "Incorrect byte of data length"
 	to_encode = gets.chomp
 end
 
-parity_bits = get_parity_bits(bits_length)
+parity_bits = get_parity_bits(input_length + 1)
 
-parity_bits.each { |x|
-	to_encode.insert(x - 1, '_')
-}
+parity_bits.each { |x| to_encode.insert(x - 1, '_') }
 
-parity_bits.each { |x|
-	positions = get_positions(x, bits_length)
-	puts positions
-	to_encode[x - 1] = String(mod(to_encode, positions))
-}
+parity_bits.each { |x| to_encode[x - 1] = String(mod(to_encode, get_positions(x, 11))) }
 
 puts "Encodierter Hamming-Code: " << to_encode
