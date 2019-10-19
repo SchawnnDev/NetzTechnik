@@ -39,10 +39,11 @@ def is_even(bit_string, where)
 
 end
 
-puts "Please the byte of data you want to encode (8 bits)"
+bits_length = 8
+puts "Please the byte of data you want to encode (7 bits)"
 to_encode = gets.chomp
 
-while to_encode.length != 8
+while to_encode.length != 7
 puts "Incorrect byte of data length"
 to_encode = gets.chomp
 end
