@@ -40,7 +40,7 @@ def is_even(bit_string, where)
 end
 
 puts "Please the byte of data you want to encode (8 bits)"
-to_encode = "10011010"#gets.chomp
+to_encode = gets.chomp
 
 while to_encode.length != 8
 puts "Incorrect byte of data length"
@@ -53,15 +53,9 @@ parity_bits.each { |x|
 	to_encode.insert(x - 1, '_')
 }
 
-puts to_encode
-
 parity_bits.each { |x|
 	even = is_even(to_encode, get_positions(x, to_encode.length).drop(1))
-	puts "x " << String(x) << " is " << (even ? "true" : "false")
 	to_encode[x - 1] = even ? "0" : "1"
 }
-
-
-
 
 puts "Encodierter Hamming-Code: " << to_encode
