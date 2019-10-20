@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Server
 {
@@ -13,25 +14,59 @@ namespace Server
 		private static void Main(string[] args)
 		{
 			Console.WriteLine($"Please write the byte of data you want to encode ({InputLength} bits)");
-			var str = "";
-			
-			while ((str = Console.ReadLine()).Length != InputLength)
+			string input;
+
+			while ((input = Console.ReadLine())?.Length != InputLength)
 			{
 				Console.WriteLine("Incorrect byte of data length");
 			}
 
-			Console.WriteLine(string.Join(", ", GetParity(OutputLength + 1)));
-			Console.WriteLine(string.Join(", ",GetPositions(1, InputLength)));
-			Console.WriteLine(string.Join(", ", GetPositions(2, InputLength)));
-			Console.WriteLine(string.Join(", ", GetPositions(4, InputLength)));
-			Console.WriteLine(string.Join(", ", GetPositions(8, InputLength)));
+			var array = input.ToCharArray();
+			var output = 0;
+			foreach (var parity in GetParity(OutputLength + 1))
+			{
+				int sum = 0;
+				foreach (var position in GetPositions(parity, InputLength)) sum += int.Parse(array[position - 1].ToString());
+
+				output += sum * parity;
+			}
+
+			if (output != 0)
+			{
+				var fixChar = FixChar(input[output - 1]);
+
+				Console.WriteLine($"Byte at position {output} is incorrect. Fixed from { FixChar(fixChar) } to { fixChar } ");
+
+				array[output - 1] = fixChar;
+
+			}
+
+			Console.WriteLine($"Decoded Hamming-Code: {DeleteParity(array)}");
 
 		}
 
-		private static IEnumerable<int> GetParity(int length)
+		private static string DeleteParity(char[] array)
+		{
+			var output = "";
+			var parity = GetParity(OutputLength + 1);
+
+
+			for (var i = 1; i <= array.Length; i++)
+			{
+				if (parity.Contains(i)) continue;
+				output += array[i - 1];
+			}
+
+			return output;
+
+		}
+
+
+		private static char FixChar(char input) => input == '0' ? '1' : '0';
+
+		private static int[] GetParity(int length)
 		{
 			var list = new List<int>();
-
 			var currVal = 0;
 
 			while (Math.Pow(2, currVal) <= length)
@@ -40,7 +75,7 @@ namespace Server
 				currVal++;
 			}
 
-			return list;
+			return list.ToArray();
 		}
 
 		private static IEnumerable<int> GetPositions(int pos, int length)
@@ -50,8 +85,10 @@ namespace Server
 			while (currentVal < length)
 			{
 				for (var i = 1; i <= pos; i++)
-					list.Add(currentVal++);
-				currentVal += pos;
+					currentVal = Math.Min(currentVal + 1, length);
+
+				currentVal = Math.Min(currentVal + pos, length);
+
 			}
 
 			return list.ToArray();

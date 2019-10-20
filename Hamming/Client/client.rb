@@ -41,8 +41,8 @@ end
 
 input_length = 7
 output_length = 11
-puts "Please the byte of data you want to encode (#{input_length} bits)"
-to_encode = "1000001"#gets.chomp
+puts "Please write the byte of data you want to encode (#{input_length} bits)"
+to_encode = gets.chomp
 
 while to_encode.length != input_length
 	puts "Incorrect byte of data length"
