@@ -11,48 +11,17 @@ namespace Server
 		private const int InputLength = 11;
 		private const int OutputLength = 7;
 
-		private static string getString(char[] a, int[] b)
-		{
-			var c = new StringBuilder();
-			var d = 1;
-			foreach (var e in b)
-			{
-				if(e > a.Length)
-					continue;
-				
-				c.Append(a[e-1]);
-
-				if (d < b.Length)
-					c.Append(" + ");
-				
-				d++;
-
-
-			}
-
-			return c.ToString();
-		}
-
 		private static void Main(string[] args)
 		{
-			Console.WriteLine($"Please write the byte of data you want to encode ({InputLength} bits)");
-			string input;
+			var input = args.Length == 0 ? "00011110000" : args[0];
 
-			while ((input = Console.ReadLine())?.Length != InputLength)
-			{
+			if(string.IsNullOrWhiteSpace(input)) { 
 				Console.WriteLine("Incorrect byte of data length");
+				return;
 			}
 
 			var array = input.ToCharArray();
-			var output = 0;
-			foreach (var parity in GetParity(OutputLength+1))
-			{
-				var pos = GetPositions(parity, InputLength);
-				var a = Mod(array, pos);
-				output +=  a * parity;
-				Console.WriteLine($"({getString(array, pos)}) % 2 = {a} * {parity}");
-
-			}
+			var output = (from parity in GetParity(OutputLength + 1) let pos = GetPositions(parity, InputLength) let a = Mod(array, pos) select a * parity).Sum();
 
 			if (output != 0)
 			{
