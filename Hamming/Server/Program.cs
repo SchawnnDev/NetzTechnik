@@ -11,6 +11,28 @@ namespace Server
 		private const int InputLength = 11;
 		private const int OutputLength = 7;
 
+		private static string getString(char[] a, int[] b)
+		{
+			var c = new StringBuilder();
+			var d = 1;
+			foreach (var e in b)
+			{
+				if(e > a.Length)
+					continue;
+				
+				c.Append(a[e-1]);
+
+				if (d < b.Length)
+					c.Append(" + ");
+				
+				d++;
+
+
+			}
+
+			return c.ToString();
+		}
+
 		private static void Main(string[] args)
 		{
 			Console.WriteLine($"Please write the byte of data you want to encode ({InputLength} bits)");
@@ -22,7 +44,15 @@ namespace Server
 			}
 
 			var array = input.ToCharArray();
-			var output = GetParity(OutputLength).Sum(parity => Mod(array, GetPositions(parity, InputLength)) * parity);
+			var output = 0;
+			foreach (var parity in GetParity(OutputLength+1))
+			{
+				var pos = GetPositions(parity, InputLength);
+				var a = Mod(array, pos);
+				output +=  a * parity;
+				Console.WriteLine($"({getString(array, pos)}) % 2 = {a} * {parity}");
+
+			}
 
 			if (output != 0)
 			{
@@ -32,13 +62,15 @@ namespace Server
 
 				array[output - 1] = fixChar;
 
+				Console.WriteLine($"Corrected 11-Hamming-Code: {string.Join("", array)}");
+				Console.WriteLine();
 			}
 
 			Console.WriteLine($"Decoded Hamming-Code: {DeleteParity(array)}");
 
 		}
 
-		private static int Mod(char[] array, int[] where) => @where.Aggregate(0, (current, i) => current + array[i - 1]) % 2;
+		private static int Mod(char[] array, int[] where) => @where.Where(i => i <= array.Length).Aggregate(0, (current, i) => current + array[i - 1]) % 2;
 
 		private static string DeleteParity(char[] array)
 		{
@@ -77,7 +109,7 @@ namespace Server
 		{
 			var list = new List<int>();
 			var currentVal = pos;
-			while (currentVal < length)
+			while (currentVal <= length)
 			{
 				for (var i = 1; i <= pos; i++)
 					list.Add(currentVal++);
