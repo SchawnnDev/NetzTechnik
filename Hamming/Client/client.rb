@@ -48,6 +48,6 @@ parity_bits = get_parity_bits(input_length + 1)
 
 parity_bits.each { |x| to_encode.insert(x - 1, '_') }
 
-parity_bits.each { |x| to_encode[x - 1] = String(mod(to_encode, get_positions(x, 11))) }
+parity_bits.each { |x| to_encode[x - 1] = String(mod(to_encode, get_positions(x, output_length))) }
 
 puts "Encodierter Hamming-Code: " << to_encode
